@@ -1,6 +1,12 @@
-require('dotenv').config()
-const express = require('express')
-const app = express()
+require("dotenv").config();
+const express = require("express");
+const app = express();
+const router = express.Router();
+
+const server = app.listen(3000, () => {
+  console.log(`Example app listening on port 3000`);
+});
+
 // TODO: import the getCityInfo and getJobs functions from util.js
 
 // TODO: Statically serve the public folder
@@ -14,4 +20,12 @@ const app = express()
 // If no city info or jobs are found,
 // the endpoint should return a 404 status
 
-module.exports = app
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
+
+process.on("SIGTERM", () => {
+  server.close();
+});
+
+module.exports = app;
