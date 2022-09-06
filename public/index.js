@@ -24,6 +24,7 @@ async function getJobsAndCityInfo(location) {
     const data = await response.json()
     return data
   } catch(err) {
+    console.log("caught error")
     return false
   }
 }

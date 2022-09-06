@@ -1,15 +1,13 @@
-require("dotenv").config();
-const express = require("express");
-const app = express();
-const router = express.Router();
+require('dotenv').config()
+const express = require('express')
+const app = express()
+const {getCityInfo, getJobs} = require("./util")
 
-const server = app.listen(3000, () => {
-  console.log(`Example app listening on port 3000`);
-});
 
 // TODO: import the getCityInfo and getJobs functions from util.js
 
 // TODO: Statically serve the public folder
+app.use(express.static("./public"))
 
 // TODO: declare the GET route /api/city/:city
 // This endpoint should call getCityInfo and getJobs and return
@@ -19,13 +17,19 @@ const server = app.listen(3000, () => {
 // jobs (with value of the getJobs function)
 // If no city info or jobs are found,
 // the endpoint should return a 404 status
+app.get("/api/city/:city", async (req,res)=>{
+  const {city} = req.params
+  //console.log(`Getting info for ${req.params.city}`)
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+  const cityInfo = await getCityInfo(city)
+  const jobs = await getJobs(city)
 
-process.on("SIGTERM", () => {
-  server.close();
-});
+  if (cityInfo || jobs) {
+    res.send({cityInfo: cityInfo, jobs: jobs})
+  } else {
+    console.log("sending 404")
+    res.status(404).send({error: "An error occurred"})
+  }
+})
 
-module.exports = app;
+module.exports = app
