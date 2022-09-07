@@ -17,19 +17,25 @@ app.use(express.static("./public"))
 // jobs (with value of the getJobs function)
 // If no city info or jobs are found,
 // the endpoint should return a 404 status
-app.get("/api/city/:city", async (req,res)=>{
-  const {city} = req.params
-  //console.log(`Getting info for ${req.params.city}`)
+app.get("/api/city/:city", async (req,res) => {
+  let {city} = req.params
+  
+  try {
+    const cityInfo = await getCityInfo(city)
+    const jobs = await getJobs(city)
 
-  const cityInfo = await getCityInfo(city)
-  const jobs = await getJobs(city)
-
-  if (cityInfo || jobs) {
-    res.send({cityInfo: cityInfo, jobs: jobs})
-  } else {
-    console.log("sending 404")
-    res.status(404).send({error: "An error occurred"})
+    if (cityInfo || jobs) {
+      res.send({cityInfo: cityInfo, jobs:jobs})
+    } else {
+      res.status(404).send({error: "An error has occurred!"})
+    }
+  } catch (error) {
+    console(error)
+    res.status(404).send({error: "An error has occurred!"})
   }
+  
 })
 
+
 module.exports = app
+
